@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cadet College Digital Notice System</title>
+
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: #10243b;
+      --panel-light: #f8fafc;
+      --text: #f8fafc;
+      --dark-text: #172033;
+      --muted: #94a3b8;
+      --blue: #38bdf8;
+      --yellow: #facc15;
+      --red: #ef4444;
+      --green: #22c55e;
+      --border: #29476b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Login */
+
+    .login-page,
+    .activation-page {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background:
+        radial-gradient(circle at top, #1b4975, transparent 45%),
+        var(--bg);
+    }
+
+    .login-card,
+    .activation-card {
+      width: min(430px, 100%);
+      padding: 35px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      text-align: center;
+      background: var(--panel);
+      box-shadow: 0 20px 70px #0008;
+    }
+
+    .logo {
+      width: 70px;
+      height: 70px;
+      margin: auto;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #111827;
+      background: var(--yellow);
+      font-size: 34px;
+    }
+
+    .login-card h1,
+    .activation-card h1 {
+      margin: 20px 0 8px;
+    }
+
+    .login-card p,
+    .activation-card p {
+      color: var(--muted);
+    }
+
+    label {
+      display: block;
+      margin: 18px 0 7px;
+      color: #cbd5e1;
+      text-align: left;
+      font-weight: bold;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 13px;
+      color: white;
+      border: 1px solid #365474;
+      border-radius: 8px;
+      outline: none;
+      background: #142d48;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--blue);
+    }
+
+    .primary-button,
+    .activation-button {
+      width: 100%;
+      margin-top: 22px;
+      padding: 14px 20px;
+      border: 0;
+      border-radius: 8px;
+      color: #06111e;
+      background: var(--blue);
+      font-weight: bold;
+    }
+
+    .activation-button {
+      color: #422006;
+      background: var(--yellow);
+    }
+
+    .error {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 7px;
+      color: #fecaca;
+      background: #7f1d1d;
+    }
+
+    .success {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 7px;
+      color: #bbf7d0;
+      background: #14532d;
+    }
+
+    /* Admin */
+
+    .admin-page {
+      min-height: 100vh;
+      color: var(--dark-text);
+      background: #f1f5f9;
+    }
+
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      padding: 25px 5%;
+      color: white;
+      background: #0d1d31;
+    }
+
+    .admin-header h1 {
+      margin: 0 0 6px;
+    }
+
+    .admin-header p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .connection-status {
+      color: #86efac;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .logout-button,
+    .small-button {
+      padding: 9px 13px;
+      border: 0;
+      border-radius: 7px;
+      color: white;
+      background: #334155;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      width: 90%;
+      max-width: 1400px;
+      margin: 30px auto;
+    }
+
+    .stat-card {
+      padding: 22px;
+      border-radius: 13px;
+      background: white;
+      box-shadow: 0 3px 12px #0f172a18;
+    }
+
+    .stat-card strong,
+    .stat-card span {
+      display: block;
+    }
+
+    .stat-card strong {
+      color: #0369a1;
+      font-size: 32px;
+    }
+
+    .stat-card span {
+      margin-top: 5px;
+      color: #64748b;
+    }
+
+    .admin-content {
+      display: grid;
+      grid-template-columns: minmax(300px, 420px) 1fr;
+      gap: 28px;
+      width: 90%;
+      max-width: 1400px;
+      margin: auto;
+    }
+
+    .form-panel,
+    .notices-panel,
+    .links-panel {
+      padding: 24px;
+      border-radius: 14px;
+      background: white;
+      box-shadow: 0 3px 12px #0f172a18;
+    }
+
+    .form-panel h2,
+    .notices-panel h2,
+    .links-panel h2 {
+      margin-top: 0;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .notice-card {
+      margin-bottom: 18px;
+      padding: 20px;
+      color: var(--dark-text);
+      border-left: 6px solid var(--blue);
+      border-radius: 10px;
+      background: #f8fafc;
+    }
+
+    .notice-card.important {
+      border-left-color: var(--yellow);
+    }
+
+    .notice-card.urgent {
+      border-left-color: var(--red);
+    }
+
+    .notice-top,
+    .notice-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 5px;
+      color: #075985;
+      background: #bae6fd;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .notice-card.important .badge {
+      color: #854d0e;
+      background: #fef08a;
+    }
+
+    .notice-card.urgent .badge {
+      color: #991b1b;
+      background: #fecaca;
+    }
+
+    .notice-card h3 {
+      margin: 16px 0 8px;
+      font-size: 23px;
+    }
+
+    .notice-card p {
+      white-space: pre-wrap;
+      color: #475569;
+      line-height: 1.6;
+    }
+
+    .notice-bottom {
+      color: #64748b;
+      font-size: 13px;
+    }
+
+    .notice-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .delete-button {
+      background: #b91c1c;
+    }
+
+    .links-panel {
+      width: 90%;
+      max-width: 1400px;
+      margin: 28px auto 50px;
+    }
+
+    .display-link {
+      display: grid;
+      grid-template-columns: 150px 1fr auto;
+      gap: 15px;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .display-link code {
+      color: #475569;
+    }
+
+    .display-link a {
+      color: #0369a1;
+      font-weight: bold;
+    }
+
+    /* House display */
+
+    .house-display {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      color: white;
+      background:
+        radial-gradient(circle at top right, #163b61, transparent 40%),
+        var(--bg);
+    }
+
+    .display-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      padding: 30px 5%;
+      border-bottom: 1px solid #ffffff1a;
+    }
+
+    .college-name {
+      color: white;
+      font-size: clamp(24px, 3vw, 42px);
+      font-weight: 900;
+      letter-spacing: 4px;
+    }
+
+    .system-name {
+      margin-top: 8px;
+      color: #7dd3fc;
+      font-size: clamp(14px, 1.4vw, 22px);
+      letter-spacing: 3px;
+    }
+
+    .display-status {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      text-align: right;
+      font-size: 14px;
+    }
+
+    .alerts-enabled,
+    .connected {
+      color: #86efac;
+    }
+
+    .disconnected {
+      color: #fca5a5;
+    }
+
+    .house-heading {
+      padding: 38px 5% 20px;
+      text-align: center;
+    }
+
+    .house-label {
+      color: #7dd3fc;
+      letter-spacing: 6px;
+      font-weight: bold;
+    }
+
+    .house-heading h1 {
+      margin: 8px 0 15px;
+      color: var(--yellow);
+      font-size: clamp(70px, 10vw, 150px);
+      line-height: .9;
+      letter-spacing: 12px;
+    }
+
+    .date-time {
+      color: #cbd5e1;
+      font-size: clamp(17px, 2vw, 28px);
+    }
+
+    .new-banner {
+      width: fit-content;
+      margin: 10px auto 25px;
+      padding: 12px 24px;
+      border-radius: 40px;
+      color: #451a03;
+      background: var(--yellow);
+      font-weight: 900;
+      animation: pulse 1s infinite alternate;
+    }
+
+    .display-notices {
+      flex: 1;
+      width: min(1150px, 90%);
+      margin: auto;
+    }
+
+    .display-notices .notice-card {
+      color: white;
+      border-left-width: 9px;
+      background: #122840;
+    }
+
+    .display-notices .notice-card h3 {
+      font-size: clamp(28px, 3vw, 48px);
+    }
+
+    .display-notices .notice-card p {
+      color: #e2e8f0;
+      font-size: clamp(20px, 2vw, 32px);
+    }
+
+    .display-notices .notice-bottom {
+      color: #cbd5e1;
+      font-size: clamp(13px, 1.2vw, 18px);
+    }
+
+    .newest-label {
+      margin: -10px 0 20px 15px;
+      color: #7dd3fc;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 2px;
+    }
+
+    .no-notices {
+      padding: 80px 20px;
+      text-align: center;
+      color: #94a3b8;
+    }
+
+    .no-notices strong {
+      display: block;
+      margin-bottom: 15px;
+      color: #86efac;
+      font-size: 70px;
+    }
+
+    .no-notices h2 {
+      color: white;
+      font-size: 34px;
+    }
+
+    .display-footer {
+      padding: 24px;
+      color: #64748b;
+      text-align: center;
+      border-top: 1px solid #ffffff1a;
+    }
+
+    .animate-new {
+      animation: newNotice .8s ease-in-out 3;
+    }
+
+    @keyframes pulse {
+      from {
+        transform: scale(1);
+      }
+
+      to {
+        transform: scale(1.06);
+      }
+    }
+
+    @keyframes newNotice {
+      0%, 100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.025);
+        filter: brightness(1.4);
+      }
+    }
+
+    @media (max-width: 800px) {
+      .admin-header,
+      .display-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .header-actions,
+      .display-status {
+        text-align: left;
+        align-items: flex-start;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .admin-content {
+        grid-template-columns: 1fr;
+      }
+
+      .display-link {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .dashboard-grid,
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .notice-top,
+      .notice-bottom {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app"></div>
+
+  <script>
+    const ADMIN_USERNAME = "admin";
+    const ADMIN_PASSWORD = "1234";
+    const STORAGE_KEY = "cadet_college_notices";
+
+    let notices = loadNotices();
+    let audioContext = null;
+    let displayHouse = null;
+    let displayActivated = false;
+    let previousNoticeIds = new Set();
+    let newNoticeId = null;
+    let newNoticeTimer = null;
+
+    function loadNotices() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveNotices() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(notices));
+      window.dispatchEvent(new Event("noticesUpdated"));
+    }
+
+    function generateId() {
+      return Date.now().toString(36) + Math.random().toString(36).slice(2);
+    }
+
+    function escapeHTML(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function formatDate(date) {
+      return new Date(date).toLocaleString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    function playAlertSound() {
+      const AudioContextClass =
+        window.AudioContext || window.webkitAudioContext;
+
+      if (!AudioContextClass) return;
+
+      if (!audioContext) {
+        audioContext = new AudioContextClass();
+      }
+
+      if (audioContext.state === "suspended") {
+        audioContext.resume();
+      }
+
+      const oscillator = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(
+        800,
+        audioContext.currentTime
+      );
+
+      oscillator.frequency.exponentialRampToValueAtTime(
+        420,
+        audioContext.currentTime + 0.4
+      );
+
+      gain.gain.setValueAtTime(
+        0.001,
+        audioContext.currentTime
+      );
+
+      gain.gain.exponentialRampToValueAtTime(
+        0.35,
+        audioContext.currentTime + 0.03
+      );
+
+      gain.gain.exponentialRampToValueAtTime(
+        0.001,
+        audioContext.currentTime + 0.5
+      );
+
+      oscillator.connect(gain);
+      gain.connect(audioContext.destination);
+
+      oscillator.start();
+      oscillator.stop(audioContext.currentTime + 0.55);
+    }
+
+    function initializeAudio() {
+      const AudioContextClass =
+        window.AudioContext || window.webkitAudioContext;
+
+      if (!AudioContextClass) return;
+
+      audioContext = new AudioContextClass();
+
+      if (audioContext.state === "suspended") {
+        audioContext.resume();
+      }
+
+      playAlertSound();
+    }
+
+    function noticeCard(notice, admin = false) {
+      const priorityClass = notice.priority.toLowerCase();
+
+      return `
+        <article class="notice-card ${priorityClass}">
+          <div class="notice-top">
+            <span class="badge">${escapeHTML(notice.priority)}</span>
+            <span class="badge">
+              ${
+                notice.targetHouse === "ALL"
+                  ? "ALL HOUSES"
+                  : notice.targetHouse + " HOUSE"
+              }
+            </span>
+          </div>
+
+          <h3>${escapeHTML(notice.title)}</h3>
+          <p>${escapeHTML(notice.message)}</p>
+
+          <div class="notice-bottom">
+            <span>Published: ${formatDate(notice.createdAt)}</span>
+
+            ${
+              admin
+                ? `
+                  <div class="notice-actions">
+                    ${
+                      notice.active
+                        ? `
+                          <button class="small-button"
+                            onclick="archiveNotice('${notice.id}')">
+                            Archive
+                          </button>
+                        `
+                        : ""
+                    }
+
+                    <button class="small-button delete-button"
+                      onclick="deleteNotice('${notice.id}')">
+                      Delete
+                    </button>
+                  </div>
+                `
+                : ""
+            }
+          </div>
+        </article>
+      `;
+    }
+
+    function renderLogin() {
+      document.getElementById("app").innerHTML = `
+        <main class="login-page">
+          <form class="login-card" id="loginForm">
+            <div class="logo">📢</div>
+            <h1>Admin Login</h1>
+            <p>Cadet College Digital Notice System</p>
+
+            <label>Username</label>
+            <input id="username" required placeholder="Enter username">
+
+            <label>Password</label>
+            <input id="password" type="password" required
+              placeholder="Enter password">
+
+            <div id="loginError"></div>
+
+            <button class="primary-button">Login</button>
+          </form>
+        </main>
+      `;
+
+      document.getElementById("loginForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        if (
+          username === ADMIN_USERNAME &&
+          password === ADMIN_PASSWORD
+        ) {
+          sessionStorage.setItem("adminLoggedIn", "true");
+          renderAdmin();
+        } else {
+          document.getElementById("loginError").innerHTML =
+            `<div class="error">Invalid username or password.</div>`;
+        }
+      });
+    }
+
+    function renderAdmin() {
+      notices = loadNotices();
+
+      const activeNotices = notices.filter(notice => notice.active);
+
+      document.getElementById("app").innerHTML = `
+        <main class="admin-page">
+          <header class="admin-header">
+            <div>
+              <h1>Cadet College Notice System</h1>
+              <p>Administrator Dashboard</p>
+            </div>
+
+            <div class="header-actions">
+              <span class="connection-status">
+                ● Browser Storage Connected
+              </span>
+
+              <button class="logout-button" id="logoutButton">
+                Logout
+              </button>
+            </div>
+          </header>
+
+          <section class="dashboard-grid">
+            <div class="stat-card">
+              <strong>${activeNotices.length}</strong>
+              <span>Active Notices</span>
+            </div>
+
+            <div class="stat-card">
+              <strong>
+                ${activeNotices.filter(n => n.targetHouse === "RH").length}
+              </strong>
+              <span>RH Notices</span>
+            </div>
+
+            <div class="stat-card">
+              <strong>
+                ${activeNotices.filter(n => n.targetHouse === "SH").length}
+              </strong>
+              <span>SH Notices</span>
+            </div>
+
+            <div class="stat-card">
+              <strong>
+                ${activeNotices.filter(n => n.targetHouse === "TH").length}
+              </strong>
+              <span>TH Notices</span>
+            </div>
+          </section>
+
+          <section class="admin-content">
+            <form class="form-panel" id="noticeForm">
+              <h2>Create New Notice</h2>
+
+              <label>Notice Title</label>
+              <input id="noticeTitle" required
+                placeholder="Example: Football Practice">
+
+              <label>Notice Message</label>
+              <textarea id="noticeMessage" rows="6" required
+                placeholder="Write notice details..."></textarea>
+
+              <div class="form-row">
+                <div>
+                  <label>Target House</label>
+                  <select id="targetHouse">
+                    <option value="ALL">ALL HOUSES</option>
+                    <option value="RH">RH</option>
+                    <option value="SH">SH</option>
+                    <option value="TH">TH</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label>Priority</label>
+                  <select id="priority">
+                    <option value="Normal">Normal</option>
+                    <option value="Important">Important</option>
+                    <option value="Urgent">Urgent</option>
+                  </select>
+                </div>
+              </div>
+
+              <button class="primary-button">
+                Publish Notice
+              </button>
+
+              <div id="publishMessage"></div>
+            </form>
+
+            <section class="notices-panel">
+              <h2>Notice History</h2>
+
+              ${
+                notices.length === 0
+                  ? `<p>No notices published yet.</p>`
+                  : notices.map(notice => noticeCard(notice, true)).join("")
+              }
+            </section>
+          </section>
+
+          <section class="links-panel">
+            <h2>House Display Links</h2>
+
+            ${["RH", "SH", "TH"].map(house => {
+              const url =
+                window.location.origin +
+                window.location.pathname +
+                "?house=" +
+                house;
+
+              return `
+                <div class="display-link">
+                  <strong>${house} Display</strong>
+                  <code>${url}</code>
+                  <a href="?house=${house}" target="_blank">
+                    Open Display
+                  </a>
+                </div>
+              `;
+            }).join("")}
+          </section>
+        </main>
+      `;
+
+      document.getElementById("logoutButton").onclick = function () {
+        sessionStorage.removeItem("adminLoggedIn");
+        renderLogin();
+      };
+
+      document.getElementById("noticeForm").onsubmit = function (event) {
+        event.preventDefault();
+
+        const title = document.getElementById("noticeTitle").value.trim();
+        const message = document.getElementById("noticeMessage").value.trim();
+        const targetHouse = document.getElementById("targetHouse").value;
+        const priority = document.getElementById("priority").value;
+
+        if (!title || !message) return;
+
+        const newNotice = {
+          id: generateId(),
+          title,
+          message,
+          targetHouse,
+          priority,
+          active: true,
+          createdAt: new Date().toISOString()
+        };
+
+        notices.unshift(newNotice);
+        saveNotices();
+
+        document.getElementById("noticeForm").reset();
+
+        document.getElementById("publishMessage").innerHTML =
+          `<div class="success">Notice published successfully.</div>`;
+
+        setTimeout(renderAdmin, 700);
+      };
+    }
+
+    function archiveNotice(id) {
+      notices = loadNotices();
+
+      notices = notices.map(notice =>
+        notice.id === id
+          ? { ...notice, active: false }
+          : notice
+      );
+
+      saveNotices();
+      renderAdmin();
+    }
+
+    function deleteNotice(id) {
+      if (!confirm("Delete this notice permanently?")) return;
+
+      notices = loadNotices().filter(notice => notice.id !== id);
+      saveNotices();
+      renderAdmin();
+    }
+
+    function renderActivation(house) {
+      document.getElementById("app").innerHTML = `
+        <main class="activation-page">
+          <section class="activation-card">
+            <div class="logo">📢</div>
+            <h1>Digital Notice Display</h1>
+            <h2>${house} HOUSE</h2>
+            <p>
+              Click the button to enable live notices and alert sounds.
+            </p>
+
+            <button class="activation-button" id="activateButton">
+              Enable Display & Alerts
+            </button>
+          </section>
+        </main>
+      `;
+
+      document.getElementById("activateButton").onclick = function () {
+        initializeAudio();
+        displayActivated = true;
+        previousNoticeIds = new Set(
+          notices
+            .filter(notice =>
+              notice.active &&
+              (notice.targetHouse === house || notice.targetHouse === "ALL")
+            )
+            .map(notice => notice.id)
+        );
+
+        renderDisplay(house);
+      };
+    }
+
+    function renderDisplay(house) {
+      notices = loadNotices();
+
+      const relevantNotices = notices
+        .filter(notice =>
+          notice.active &&
+          (notice.targetHouse === house || notice.targetHouse === "ALL")
+        )
+        .sort((a, b) =>
+          new Date(b.createdAt) - new Date(a.createdAt)
+        );
+
+      const now = new Date();
+
+      document.getElementById("app").innerHTML = `
+        <main class="house-display">
+          <header class="display-header">
+            <div>
+              <div class="college-name">CADET COLLEGE</div>
+              <div class="system-name">DIGITAL NOTICE BOARD</div>
+            </div>
+
+            <div class="display-status">
+              <span class="alerts-enabled">🔔 Alerts Enabled</span>
+              <span class="connected">● Live Updates Active</span>
+            </div>
+          </header>
+
+          <section class="house-heading">
+            <div class="house-label">HOUSE</div>
+            <h1>${house}</h1>
+            <div class="date-time">
+              ${now.toLocaleString("en-GB", {
+                weekday: "long",
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
+              })}
+            </div>
+          </section>
+
+          ${
+            newNoticeId
+              ? `<div class="new-banner">🔔 NEW NOTICE</div>`
+              : ""
+          }
+
+          <section class="display-notices">
+            ${
+              relevantNotices.length === 0
+                ? `
+                  <div class="no-notices">
+                    <strong>✓</strong>
+                    <h2>No Active Notices</h2>
+                    <p>
+                      New announcements will appear here automatically.
+                    </p>
+                  </div>
+                `
+                : relevantNotices.map((notice, index) => `
+                  <div class="${
+                    notice.id === newNoticeId ? "animate-new" : ""
+                  }">
+                    ${noticeCard(notice)}
+
+                    ${
+                      index === 0
+                        ? `<div class="newest-label">LATEST NOTICE</div>`
+                        : ""
+                    }
+                  </div>
+                `).join("")
+            }
+          </section>
+
+          <footer class="display-footer">
+            Digital Notice System | ${house} House
+          </footer>
+        </main>
+      `;
+    }
+
+    function updateDisplay() {
+      if (!displayActivated || !displayHouse) return;
+
+      const currentNotices = loadNotices();
+
+      const relevantNotices = currentNotices.filter(notice =>
+        notice.active &&
+        (notice.targetHouse === displayHouse ||
+          notice.targetHouse === "ALL")
+      );
+
+      const currentIds = new Set(
+        relevantNotices.map(notice => notice.id)
+      );
+
+      const newNotice = relevantNotices.find(
+        notice => !previousNoticeIds.has(notice.id)
+      );
+
+      if (newNotice && previousNoticeIds.size > 0) {
+        newNoticeId = newNotice.id;
+        playAlertSound();
+
+        clearTimeout(newNoticeTimer);
+
+        newNoticeTimer = setTimeout(() => {
+          newNoticeId = null;
+          renderDisplay(displayHouse);
+        }, 5000);
+      }
+
+      previousNoticeIds = currentIds;
+      notices = currentNotices;
+      renderDisplay(displayHouse);
+    }
+
+    function startApplication() {
+      const params = new URLSearchParams(window.location.search);
+      const requestedHouse = params.get("house");
+
+      if (["RH", "SH", "TH"].includes(requestedHouse)) {
+        displayHouse = requestedHouse;
+        renderActivation(displayHouse);
+        return;
+      }
+
+      if (sessionStorage.getItem("adminLoggedIn") === "true") {
+        renderAdmin();
+      } else {
+        renderLogin();
+      }
+    }
+
+    window.addEventListener("storage", function (event) {
+      if (event.key === STORAGE_KEY) {
+        updateDisplay();
+
+        if (!displayHouse) {
+          renderAdmin();
+        }
+      }
+    });
+
+    window.addEventListener("noticesUpdated", function () {
+      if (displayHouse) {
+        updateDisplay();
+      }
+    });
+
+    setInterval(function () {
+      if (displayHouse && displayActivated) {
+        renderDisplay(displayHouse);
+      }
+    }, 1000);
+
+    startApplication();
+  </script>
+</body>
+</html>
